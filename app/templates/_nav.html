@@ -1,0 +1,12 @@
+<div>Expense Tracker:
+        <a href="{{url_for('auth.login')}}">Home</a>
+        {%if current_user.is_anonymous%}
+        <a href="{{url_for('auth.login')}}">Login</a>
+        
+        {%else%}
+        <a href="{{url_for('main.expensetype')}}">ExpenseTypes</a>
+        <a href="{{url_for('main.expense')}}">Expenses</a>
+        <a href="{{url_for('auth.logout')}}" class="btn btn-danger btn-sm">Logout</a>
+        {%endif%}
+    </div>
+    <hr>
