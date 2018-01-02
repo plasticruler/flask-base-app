@@ -4,18 +4,33 @@
     {%if title%} {{title}} - Plastic Ruler Company {%else%} Welcome to the Plastic Ruler Company {%endif%}
 {%endblock%}
 
-    
+{%block styles%}
+    {{super()}}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.47/css/bootstrap-datetimepicker.css" />
+{%endblock%}
 
 {%block content%}
     <div class="container">
             {% include "_nav.html"%}            
-        {% with messages = get_flashed_messages() %}
-                {% if messages %}
-                {% for message in messages %}
-                <div class="alert alert-info alert-dismissable" role="alert">{{ message }}</div>
-                {% endfor %}
-                {% endif %}
-        {% endwith %}        
+            {% with messages = get_flashed_messages(with_categories=true) %}
+            <!-- Categories: success (green), info (blue), warning (yellow), danger (red) -->
+            {% if messages %}
+              {% for category, message in messages %}
+                <div class="alert alert-info alert-dismissible" role="alert">
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <!-- <strong>Title</strong> --> {{ message }}
+                </div>
+              {% endfor %}
+            {% endif %}
+          {% endwith %}
         {% block app_content %}{% endblock %}
     </div>
 {%endblock%}    
+
+{%block scripts%} 
+{{super()}}    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.20.1/moment.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.20.1/locale/en-gb.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.47/js/bootstrap-datetimepicker.min.js"></script>    
+    <script src="{{url_for('static',filename='custom_script.js')}}"></script>
+{%endblock%}

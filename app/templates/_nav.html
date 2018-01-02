@@ -1,4 +1,4 @@
-<div>Expense Tracker:
+<div> <a href="{{url_for('main.index')}}">Expense Tracker</a>:
         <a href="{{url_for('auth.login')}}">Home</a>
         {%if current_user.is_anonymous%}
         <a href="{{url_for('auth.login')}}">Login</a>

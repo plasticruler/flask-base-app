@@ -38,7 +38,7 @@ class Expense(BaseModel):
     price = db.Column(db.Float(precision=10,asdecimal=True),nullable=False)    
     units = db.Column(db.Integer,nullable=False)    
     note = db.Column(db.String(250))
-    paid_date = db.Column(db.DateTime,nullable=False,format="%Y-%m-%d %H:%M")    
+    paid_date = db.Column(db.DateTime,nullable=False)    
     def unit_price(self):
         return price/units if units>0 else price
     def __repr__(self):

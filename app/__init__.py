@@ -9,7 +9,7 @@ from flask_mail import Mail
 from flask_login import LoginManager
 import logging
 from logging.handlers import SMTPHandler
-from flask_bootstrap import Bootstrap
+from flask_bootstrap import Bootstrap, WebCDN
 
 
 db = SQLAlchemy()
@@ -21,11 +21,12 @@ mail = Mail()
 bootstrap = Bootstrap()
 
 def create_app(config_class=Config):
-    app = Flask(__name__)
-    app.config.from_object(config_class)
+    app = Flask(__name__, static_folder='./static')
+    app.config.from_object(config_class)    
     db.init_app(app)
     migrate.init_app(app)
     bootstrap.init_app(app)
+    app.extensions['bootstrap']['cdns']['jquery'] = WebCDN('//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/')
     mail.init_app(app)
     login.init_app(app)
 
