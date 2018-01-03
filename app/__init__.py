@@ -1,15 +1,17 @@
 import logging
 from logging.handlers import SMTPHandler, RotatingFileHandler
 import os
-from flask import Flask
+from flask import Flask, Blueprint
 from config import Config
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from flask_mail import Mail
 from flask_login import LoginManager
+import chartkick
 import logging
 from logging.handlers import SMTPHandler
 from flask_bootstrap import Bootstrap, WebCDN
+
 
 
 db = SQLAlchemy()
@@ -38,6 +40,11 @@ def create_app(config_class=Config):
 
     from app.main import bp as main_bp
     app.register_blueprint(main_bp)
+
+    #charkick specific
+    ck = Blueprint('ck_page', __name__, static_folder=chartkick.js(), static_url_path='/static')
+    app.register_blueprint(ck, url_prefix='/ck')
+    app.jinja_env.add_extension("chartkick.ext.charts")
     
     if not app.debug and not app.testing:
         if app.config['MAIL_SERVER']:

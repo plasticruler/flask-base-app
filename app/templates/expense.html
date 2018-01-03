@@ -2,10 +2,27 @@
 {% import "bootstrap/wtf.html" as wtf %} 
 
 {% block app_content %}
-<h1>Register new type of expense</h1>
-<div class="row">
+<h1>Add Expense</h1>
+<div class="row">    
+    <div class="col-md-4">
+                <table class="table table-striped">
+                    {%for item in last_10%}
+                        <tr>
+                            <td>{{item.paid_date}}</td>
+                            <td>{{item.expensetype.name}}</td>
+                            <td>{{'{0:.2f}'.format(item.price)}}</td>
+                        </tr>
+                    {%endfor%}
+                </table>
+    </div>    
+    <div class="col-md-4">
+        {% pie_chart chart_data with id='chart-1' height='400px' %}
+    </div>
     <div class="col-md-4">
             {{wtf.quick_form(form)}}
-    </div>
+        </div>
 </div>
+
+
+
 {% endblock %}

@@ -7,3 +7,6 @@ I started this project after leaning things in this video https://www.youtube.co
 
 Highly recommended.
 
++ use datepicker widget in flask-bootstrap
++ use charts in flask (https://github.com/mher/chartkick.py)
+

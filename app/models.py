@@ -31,6 +31,8 @@ class ExpenseType(BaseModel):
     __tablename__= 'expensetype'
     name = db.Column(db.String(50))
     expenses = db.relationship('Expense',backref='expensetype',lazy='dynamic')
+    def __repr__(self):
+        return '<Expense Type: {}>'.format(self.name)
 
 class Expense(BaseModel):
     __tablename__ = 'expense'
@@ -42,7 +44,7 @@ class Expense(BaseModel):
     def unit_price(self):
         return price/units if units>0 else price
     def __repr__(self):
-        return '<Expense: {} units of {} @ {} each'.format(self.units, ExpenseType.query.get(self.expensetype_id).name, self.price)
+        return '<Expense: {} units of {} @ {} each>'.format(self.units, ExpenseType.query.get(self.expensetype_id).name, self.price)
 
 
 @login.user_loader

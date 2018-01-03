@@ -10,7 +10,7 @@ class ExpenseTypeForm(FlaskForm):
 class ExpenseForm(FlaskForm):
     expensetype_id = SelectField('Expense Type',choices=[],coerce=int)
     price = StringField('Price', validators=[InputRequired(), NumberRange(min=1)])
-    units = StringField('Units purchases',validators=[InputRequired(),NumberRange(min=0.1)])
-    paid_date = DateTimeField('Paid Date',validators=[InputRequired()],format="%Y-%m-%d %H:%M", widget=render_datetime_widget)
+    units = StringField('Units purchases',validators=[InputRequired(),NumberRange(min=0.1)])    
+    paid_date = DateTimeField('Paid Date', validators=[InputRequired()],format="%Y-%m-%d %H:%M:%S", widget=render_datetime_widget)
     note = StringField('Note')
     submit = SubmitField('Save')
