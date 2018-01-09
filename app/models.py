@@ -1,16 +1,14 @@
 import os
-
 from flask_login import UserMixin
 from werkzeug.security import generate_password_hash, check_password_hash
-
 from app import db, login
-
 
 class BaseModel(db.Model):
     __abstract__ = True
     id = db.Column(db.Integer, primary_key=True)
     created_on = db.Column(db.DateTime, default=db.func.now())
     updated_on = db.Column(db.DateTime, default=db.func.now(), onupdate=db.func.now())
+    is_deleted = db.Column(db.Boolean, default=False)
 
 class User(UserMixin, BaseModel):    
     __tablename__ = 'user'
@@ -45,6 +43,8 @@ class Expense(BaseModel):
         return price/units if units>0 else price
     def __repr__(self):
         return '<Expense: {} units of {} @ {} each>'.format(self.units, ExpenseType.query.get(self.expensetype_id).name, self.price)
+
+###############################################################################
 
 
 @login.user_loader

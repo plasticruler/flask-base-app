@@ -2,7 +2,7 @@ import logging
 from logging.handlers import SMTPHandler, RotatingFileHandler
 import os
 from flask import Flask, Blueprint
-from config import Config
+from config import config
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from flask_mail import Mail
@@ -11,7 +11,7 @@ import chartkick
 import logging
 from logging.handlers import SMTPHandler
 from flask_bootstrap import Bootstrap, WebCDN
-
+from celery import Celery
 
 
 db = SQLAlchemy()
@@ -22,15 +22,32 @@ login.login_message = 'Please log in to access this page.'
 mail = Mail()
 bootstrap = Bootstrap()
 
-def create_app(config_class=Config):
+def create_celery(app):
+    celery = Celery(app.import_name, broker=app.config['CELERY_BROKER_URL'])
+    celery.conf.update(app.config)
+    TaskBase = celery.Task
+    class ContextTask(TaskBase):
+        abstract = True
+        def __call__(self, *args, **kwargs):
+            with app.app_context():
+                return TaskBase.__call__(self, *args, **kwargs)
+    celery.Task = ContextTask
+    return celery
+
+def create_app(config_name='dev'):
     app = Flask(__name__, static_folder='./static')
-    app.config.from_object(config_class)    
-    db.init_app(app)
-    migrate.init_app(app)
+    app.config.from_object(config[config_name])  
+    config[config_name].init_app(app)
+
+    db.init_app(app)   
+
     bootstrap.init_app(app)
     app.extensions['bootstrap']['cdns']['jquery'] = WebCDN('//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/')
     mail.init_app(app)
     login.init_app(app)
+    logging.basicConfig()
+
+    
 
     from app.errors import bp as errors_bp
     app.register_blueprint(errors_bp,url_prefix='/error')
@@ -41,7 +58,10 @@ def create_app(config_class=Config):
     from app.main import bp as main_bp
     app.register_blueprint(main_bp)
 
-    #charkick specific
+    from app.crypto import bp as crypto_bp
+    app.register_blueprint(crypto_bp, url_prefix='/crypto')
+
+    #chartkick specific
     ck = Blueprint('ck_page', __name__, static_folder=chartkick.js(), static_url_path='/static')
     app.register_blueprint(ck, url_prefix='/ck')
     app.jinja_env.add_extension("chartkick.ext.charts")
@@ -71,9 +91,13 @@ def create_app(config_class=Config):
     file_handler.setLevel(logging.INFO)
     app.logger.addHandler(file_handler)
 
-    app.logger.setLevel(logging.INFO)
+    #sqlalchemy sqlengine logging
+    if app.debug:
+        logging.getLogger('sqlalchemy.engine').setLevel(logging.INFO)
+        app.logger.setLevel(logging.INFO)
+    else:
+        app.logger.setLevel(logging.ERROR)
+        
     app.logger.info('Application startup')
 
     return app
-
-from app import models

@@ -1,5 +1,5 @@
 # About
-This is my base Flask project. 
+This is my base Flask project. It's very basic and still a work in progress and it should go without saying that I work on as and when I have the time to do so.
 
 # Meta
 

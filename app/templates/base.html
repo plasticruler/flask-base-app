@@ -29,14 +29,23 @@
               {% endfor %}
             {% endif %}
           {% endwith %}
-        {% block app_content %}{% endblock %}
+        {% block app_content %}
+        {%block footer%}
+              {{super()}}
+                <footer>&copy; 2016 Awesome, Inc.</footer>
+        {%endblock%}
+        
+        {% endblock %}
     </div>
 {%endblock%}    
+
+
+
 
 {%block scripts%} 
 {{super()}}    
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.20.1/moment.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.20.1/locale/en-gb.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.47/js/bootstrap-datetimepicker.min.js"></script>        <
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.47/js/bootstrap-datetimepicker.min.js"></script>        
     <script src="{{url_for('static',filename='custom_script.js')}}?1212"></script>
 {%endblock%}
