@@ -27,12 +27,13 @@ def download():
 @app.cli.command('load-coins')
 def populatecointypedata():
     coins_url = 'https://www.cryptocompare.com/api/data/coinlist/'
-    #data = DownloadURL(coins_url)
-    #data = data()['content']
+    data = DownloadURL(coins_url)
+    data = data()['content']
+    coin_file = 'coins.json'
     #UTF8Writer = codecs.getwriter('utf8')
-    #with open('coins.json','w') as f:
-    #    f.write(data)
-    with open('coins.json') as json_data:
+    with open(coin_file,'w') as f:
+        f.write(data)
+    with open(coin_file) as json_data:
         data = json.load(json_data) 
         count = len(data["Data"])
         i = 0
