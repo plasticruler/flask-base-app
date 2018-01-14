@@ -16,6 +16,8 @@ as I go along so that eventually I have enough solid building blocks and pattern
 + paginate sqlachemy results in generic list form
 + download and read .json file, then populate table using sqlalchemy
 + use logging
++ use configuration stored in prod or dev config files (dev.env containing passwords not checked in)
++ set environment variables as config items
 + use blueprints and pull app object
 
 # Meta
