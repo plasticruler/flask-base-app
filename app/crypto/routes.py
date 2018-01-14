@@ -36,7 +36,7 @@ def cryptoinstrument():
     search = False
 
     page, per_page, offset = get_page_args(page_parameter='page', per_page_parameter='per_page')
-    per_page = int(app.config['RECORDS_PER_PAGE']) #need to figure out how to read a value from config
+    per_page = int(app.config['RECORDS_PER_PAGE']) 
     data = CryptoInstrument.query.order_by('name').offset((page-1)*per_page).limit(per_page)
     data_count = CryptoInstrument.query.count()     
     
