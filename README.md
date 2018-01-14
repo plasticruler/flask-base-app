@@ -14,4 +14,6 @@ Highly recommended.
 
 + use datepicker widget in flask-bootstrap
 + use charts in flask (https://github.com/mher/chartkick.py)
++ paginate sqlachemy results in generic list form
++ download and read .json file, then populate table using sqlalchemy
 
