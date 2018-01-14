@@ -6,6 +6,12 @@
 <div class="row">    
     <div class="col-md-4">
                 <table class="table table-striped">
+                        <tr>
+                                <th>Date</th>
+                                <th>Expense</th>
+                                <th>Amount</th>
+                            </tr>
+                    {%if last_10%}
                     {%for item in last_10%}
                         <tr>
                             <td>{{item.paid_date}}</td>
@@ -13,6 +19,12 @@
                             <td>{{'{0:.2f}'.format(item.price)}}</td>
                         </tr>
                     {%endfor%}
+                    {%else%}
+                    <tr>
+                            <td colspan="3">No records found.</td>                            
+                        </tr>
+                    {%endif%}
+                    
                 </table>
     </div>    
     <div class="col-md-4">

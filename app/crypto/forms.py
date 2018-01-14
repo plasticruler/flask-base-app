@@ -20,11 +20,22 @@ class CryptoInstrumentForm(FlaskForm):
     active = BooleanField('Is Active')
     submit = SubmitField('Save')
 
+class MessageTypeForm(FlaskForm):
+    name = StringField('Name', validators=[DataRequired(), Length(min=5)])
+    description = StringField('Description', validators=[DataRequired(), Length(min=20)])
+    submit = SubmitField('Save')
 
-class DataProviderForm(FlaskForm):
-    name = StringField('Provider Name', validators=[DataRequired, Length(min=5)])
+class DataProviderSourceURLForm(FlaskForm):
+    dataprovider_id = SelectField('Data Provider',choices=[],coerce=int)
+    messagetype_id = SelectField('Message Type', choices=[], coerce=int)
+    url = StringField('Source URL', validators=[DataRequired(), Length(min=15)])
+    description = StringField('Description')
+    auth_method = SelectField('Auth method',choices=[],coerce=int)
     auth_user = StringField('Auth User')
     auth_password = StringField('Auth Password')
-    auth_method = SelectField('Auth Methods',choices=[{'basic-auth':0}],coerce=int)
+    use_authentication = BooleanField('Requires Auth')    
+    submit = SubmitField('Save')
 
-    
+class DataProviderForm(FlaskForm):        
+    name = StringField('Provider Name', validators=[DataRequired(), Length(min=4)])
+    submit = SubmitField('Save')

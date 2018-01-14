@@ -1,0 +1,33 @@
+{% extends "base.html" %} 
+{% import "bootstrap/wtf.html" as wtf %} 
+
+{% block app_content %}
+<h1>Message Type</h1>
+<div class="row">   
+        <div class="col-md-8">
+                <table class="table table-striped">
+                    <tr>
+                        <th>
+                            Message Type
+                        </th>     
+                        <th>Description</th>               
+                    </tr>                
+                    {%if message_types%}
+                    {%for item in message_types%}
+                    <tr>
+                        <td>{{item.name}}</td>
+                        <td>{{item.description}}</td>                    
+                    </tr>
+                    {%endfor%}
+                    {%else%}
+                    <tr>
+                        <td>No records.</td>
+                    </tr>
+                    {%endif%}
+                </table>
+        </div>
+    <div class="col-md-4">
+            {{wtf.quick_form(form)}}
+        </div>
+</div>
+{% endblock %}

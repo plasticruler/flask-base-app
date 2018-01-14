@@ -114,6 +114,9 @@ dev.env
 
 #log files
 /logs
+application.log*.*
 
+#custom
+coins.json
 #
 # End of https://www.gitignore.io/api/python

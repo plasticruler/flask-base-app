@@ -24,6 +24,9 @@ def expensetype():
         flash("Expense type '{}' added.".format(form.name.data))        
     return render_template('expensetype.html',form=form)
 
+
+
+
 @bp.route('/expense',methods=['GET','POST'])
 @login_required
 def expense():

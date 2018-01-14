@@ -1,0 +1,57 @@
+{% extends "base.html" %} 
+{% import "bootstrap/wtf.html" as wtf %} 
+
+{% block app_content %}
+<h1>Data Provider Source URL</h1>
+<div class="row">   
+        <div class="col-md-4">
+                {{wtf.quick_form(form)}}
+            </div>
+        <div class="col-md-8">
+                <table class="table table-striped">
+                        <tr>
+                            <th>
+                                Provider Name
+                            </th>
+                            <th>
+                                Message Type
+                            </th>
+                            <th>
+                                    Url
+                            </th>
+                            <th>
+                                Description
+                            </th>          
+                            <th>
+                                Auth Username
+                            </th>          
+                            <th>
+                                Auth Password
+                            </th>
+                            <th>
+                                Use Auth
+                            </th>
+                        </tr>                
+                        {%if provider_sources%}
+                        {%for item in provider_sources%}
+                        <tr>
+                            <td>{{item.dataprovider.name}}</td>
+                            <td>{{item.messagetype.name}}</td>
+                            <td>{{item.url}}</td>     
+                            <td>{{item.description}}</td>     
+                            <td>{{item.auth_user}}</td>     
+                            <td>{{item.auth_password}}</td>     
+                            <td>{{item.use_authentication}}</td>                    
+                        </tr>
+                        {%endfor%}
+                        {%else%}
+                        <tr>
+                            <td colspan="3">No records.</td>
+                        </tr>
+                        {%endif%}
+                    </table>
+        </div>       
+    
+    
+</div>
+{% endblock %}

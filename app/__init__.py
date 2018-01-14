@@ -36,9 +36,10 @@ def create_celery(app):
 
 def create_app(config_name='dev'):
     app = Flask(__name__, static_folder='./static')
-    app.config.from_object(config[config_name])  
     config[config_name].init_app(app)
 
+    app.config.from_object(config[config_name])  
+    
     db.init_app(app)   
 
     bootstrap.init_app(app)
@@ -91,7 +92,7 @@ def create_app(config_name='dev'):
     app.logger.addHandler(file_handler)
 
     #sqlalchemy sqlengine logging
-    if app.debug:
+    if app.config['SQLALCHEMY_ECHO']:
         logging.getLogger('sqlalchemy.engine').setLevel(logging.INFO)
         app.logger.setLevel(logging.INFO)
     else:

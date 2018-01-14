@@ -7,18 +7,17 @@ class DownloadURL(object):
         self.url = url
         self.params = params
         self.headers = headers
-        self.ptr = ptr
-        if not ptr:
-            raise Exception('invalid ptr object.')
+        self.ptr = ptr        
     def __call__(self, *args, **kwargs):
         if 'url' in kwargs:
             self.url = kwargs['url']
         if 'params' in kwargs:
             self.params = kwargs['params']
         if 'headers' in kwargs:
-            self.headers = kwargs['headers']
-        print "Downloading file at '{}'".format(self.url)
-        res =  requests.get(self.url, params=self.params, headers=self.headers)
-        self.ptr.save(res.text.encode('utf-8'))
-        return self.url
+            self.headers = kwargs['headers']        
+        content =  requests.get(self.url, params=self.params, headers=self.headers)
+        content = content.text.encode('utf-8')
+        if self.ptr:
+            self.ptr.save(content)
+        return {'url':self.url,'content':content}
         

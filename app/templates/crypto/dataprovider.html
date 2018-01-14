@@ -4,6 +4,27 @@
 {% block app_content %}
 <h1>Data Provider</h1>
 <div class="row">   
+
+    <div class="col-md-8">
+            <table class="table table-striped">
+                <tr>
+                    <th>
+                        Provider Name
+                    </th>                    
+                </tr>                
+                {%if providers%}
+                {%for item in providers%}
+                <tr>
+                    <td>{{item.name}}</td>                    
+                </tr>
+                {%endfor%}
+                {%else%}
+                <tr>
+                    <td>No records.</td>
+                </tr>
+                {%endif%}
+            </table>
+    </div>
     <div class="col-md-4">
             {{wtf.quick_form(form)}}
         </div>

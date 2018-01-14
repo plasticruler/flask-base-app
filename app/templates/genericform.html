@@ -1,0 +1,44 @@
+{% extends "base.html" %} 
+{% import "bootstrap/wtf.html" as wtf %} 
+
+{% block app_content %}
+
+
+<h1>{{form_name}}</h1>
+<div class="row">
+        <div class="col-md-4">
+                {{wtf.quick_form(form)}}
+        </div>
+</div>
+<div class="row">
+        &nbsp;
+</div>
+<div class="row">   
+        <div class="col-md-8">
+                <table class="table table-striped">                    
+                    {%if data%}
+                    <tr>
+                            {%for c in data.column_descriptions[0].expr.columns%}
+                            <th>
+                                {{c}}
+                            </th>
+                            {%endfor%}
+                    </tr>                      
+                        {%for c in data%}
+                        <tr>
+                            {%for clm in data.column_descriptions[0].expr.columns%}
+                                <td>
+                                    {{c[clm.name.split('.')|last]}}
+                                </td>
+                            {%endfor%}
+                        </tr>                            
+                        {%endfor%}                                               
+                    {%endif%}                       
+                </table>
+               
+        </div>
+    
+</div>
+{{ pagination.info }}
+{{pagination.links}}
+{% endblock %}
