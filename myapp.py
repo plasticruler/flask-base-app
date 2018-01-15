@@ -27,30 +27,40 @@ def download():
 @app.cli.command('load-coins')
 def populatecointypedata():
     coins_url = 'https://www.cryptocompare.com/api/data/coinlist/'
-    data = DownloadURL(coins_url)
-    data = data()['content']
+    coin_social_data_url = "https://www.cryptocompare.com/api/data/coinsnapshotfullbyid/?id={}"
+    #data = DownloadURL(coins_url)
+    #data = data()['content']
     coin_file = 'coins.json'
     #UTF8Writer = codecs.getwriter('utf8')
-    with open(coin_file,'w') as f:
-        f.write(data)
+    #with open(coin_file,'w') as f:
+    #    f.write(data)
     with open(coin_file) as json_data:
         data = json.load(json_data) 
         count = len(data["Data"])
         i = 0
         for d in data["Data"]:
             #print data["Data"][d]
-            ci = CryptoInstrument()
-            
+            ci = CryptoInstrument()            
             ci.name = unicode(data["Data"][d]["CoinName"])
-            ci.code = unicode(data["Data"][d]["Symbol"])
+            ci.symbol = unicode(data["Data"][d]["Symbol"])
             ci.note = unicode(data["Data"][d]["FullName"])
+            ci.foreign_id= int(data["Data"][d]["Id"])
             ci.active = True
             i +=1
-            print "Added coin {} {} of {}.".format(unicode(ci.code), i,count)
-            #if CryptoInstrument.query.filter(CryptoInstrument.code==ci.code).count()>0:
-            #    continue
+            if CryptoInstrument.query.filter(CryptoInstrument.symbol==ci.symbol).count()>0:
+                continue      
+            #print "Getting social data for {} at {}".format(ci.symbol, coin_social_data_url.format(ci.foreign_id))
+            coin_social_data = DownloadURL(coin_social_data_url.format(ci.foreign_id))()            
+            coin_social_data = json.loads(coin_social_data['content'])
+            coin_social_data = coin_social_data["Data"]["General"]
+            ci.image_url = "https://www.cryptocompare.com/{}".format(unicode(coin_social_data["ImageUrl"]))
+            ci.algorithm = unicode(coin_social_data["Algorithm"])
+            ci.twitter_handle = unicode(coin_social_data["Twitter"])
+            ci.note = unicode(coin_social_data["Description"])
+            ci.website_ahref_tag = unicode(coin_social_data["Website"])        
             db.session.add(ci)
             db.session.commit()         
+            print "Added coin {} ({}) {} of {}.".format(unicode(ci.name),unicode(ci.symbol), i,count)
     
 
 @app.cli.command('process-data')

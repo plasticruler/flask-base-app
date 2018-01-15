@@ -1,0 +1,57 @@
+{% extends "base.html" %} 
+{% import "bootstrap/wtf.html" as wtf %} 
+
+{% block app_content %}
+<h1>Crypto Coin Information</h1>
+{{ pagination.info }}
+<div class="row"> 
+       <div class="col-md-12">
+            <table class="table table-striped">
+                <tr>
+                    <th>
+                        &nbsp;
+                    </th>
+                    <th>
+                        Name
+                    </th>
+                    <th>Website</th>
+                    <th>
+                            Symbol
+                    </th>         
+                    <th>
+                            Description
+                    </th>  
+                    <th>
+                            Algorithm
+                    </th>    
+                    <th>
+                            Twitter Handle
+                    </th>  
+                    <th>
+                        &nbsp;
+                    </th>   
+                </tr>                
+                {%if data%}
+                {%for item in data%}
+                <tr>
+                    <td><img src="{{item.image_url}}" height="30" width="30"/></td>
+                    <td>{{item.name}}</td>
+                    <td>{{item.website_ahref_tag|safe}}</td>                    
+                    <td>{{item.symbol}}</td>
+                    <td>{{item.note|safe}}</td>
+                    <td>{{item.algorithm}}</td>
+                    <td><a href="https://twitter.com/{{item.twitter_handle}}"/>{{item.twitter_handle}}</td>                                        
+                    <td><button class="btn btn-small btn-info" onclick="getPrice('{{item.symbol}}','#price_{{item.id}}')">Get Price</button> <div id="price_{{item.id}}" name="price_{{item.id}}">{{item.id}}</div></td>
+                </tr>
+                {%endfor%}
+                {%else%}
+                <tr>
+                    <td colspan="6">No records.</td>
+                </tr>
+                {%endif%}
+            </table>
+    </div>    
+</div>
+
+{{pagination.links}}
+{% endblock %}

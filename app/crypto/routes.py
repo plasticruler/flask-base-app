@@ -42,16 +42,7 @@ def cryptoinstrument():
     
     pagination = Pagination(bs_version=3, per_page_parameter='per_page', page = page, total = data_count, search = search, record_name = 'cryptoinstrument')
 
-    if form.validate_on_submit():
-        c = CryptoInstrument()        
-        c.code = form.code.data
-        c.name = form.name.data
-        c.note = form.note.data
-        c.active = form.active.data
-        db.session.add(c)
-        db.session.commit()
-        flash('Cryptocurrency {} added.'.format(c))
-    return render_template('genericform.html',form=form, data=data, pagination=pagination)
+    return render_template('crypto/cryptocoin.html', data=data, pagination=pagination)
 
 @bp.route('/currency', methods=['GET','POST'])
 @login_required

@@ -11,9 +11,15 @@ class CryptoExchange(BaseModel):
 class CryptoInstrument(BaseModel):
     __tablename__ = 'cryptoinstrument'
     name = db.Column(db.String(30), nullable=False)
-    code = db.Column(db.String(10), unique=True, nullable=False)
+    symbol = db.Column(db.String(10), unique=True, nullable=False)
     note = db.Column(db.String(512))
     active = db.Column(db.Boolean(), default=True)
+    foreign_id = db.Column(db.Integer)
+    image_url = db.Column(db.String(50))
+    algorithm = db.Column(db.String(30))
+    twitter_handle = db.Column(db.String(30))
+    website_ahref_tag = db.Column(db.String(100))
+
     def __repr__(self):
         return "{} ({})".format(self.name,self.code)
 
