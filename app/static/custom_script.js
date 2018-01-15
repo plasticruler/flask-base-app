@@ -26,7 +26,7 @@ function getPrice(code, target)
   ).done((d,t)=>{
                   if (d.Type==1)
                   {
-                    console.error('Error on price retrieval');
+                    $(target).html(d.Message);
                     return;
                   }
                   $(target).html('$' + d.USD);
