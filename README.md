@@ -11,6 +11,7 @@ There is a lot of work to be done, and maybe my objective is not to finish this 
 + partial html in snippets
 + flask-authenticate
 + use jquery to call api, get result and display in div (triggered by button in a dynamically generated table)
++ display data in inline chart (using peity) after getting values from api
 + datepicker widget in flask-bootstrap
 + charts in flask (https://github.com/mher/chartkick.py)
 + paginate sqlachemy results in generic list form
