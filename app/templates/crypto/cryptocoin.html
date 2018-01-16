@@ -41,7 +41,10 @@
                     <td>{{item.note|safe}}</td>
                     <td>{{item.algorithm}}</td>
                     <td><a href="https://twitter.com/{{item.twitter_handle}}"/>{{item.twitter_handle}}</td>                                        
-                    <td><button class="btn btn-small btn-info" onclick="getPrice('{{item.symbol}}','#price_{{item.id}}')">Get Price</button> <div id="price_{{item.id}}" name="price_{{item.id}}">{{item.id}}</div></td>
+                    <td><button class="btn btn-sm btn-info" onclick="getPrice('{{item.symbol}}','{{item.id}}')">Get Price</button>
+                        <div class="badge badge-pill badge-info" id="price_{{item.id}}" name="price_{{item.id}}"></div>
+                        <span id="chart_{{item.id}}" name="chart_{{item.id}}"></span>
+                    </td>
                 </tr>
                 {%endfor%}
                 {%else%}
