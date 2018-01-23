@@ -88,15 +88,15 @@ def create_app(config_name='dev'):
     file_handler.setFormatter(logging.Formatter(
         '%(asctime)s %(levelname)s: %(message)s '
         '[in %(pathname)s:%(lineno)d]'))
-    file_handler.setLevel(logging.INFO)
+    file_handler.setLevel(logging.DEBUG)
     app.logger.addHandler(file_handler)
 
     #sqlalchemy sqlengine logging
     if app.config['SQLALCHEMY_ECHO']:
         logging.getLogger('sqlalchemy.engine').setLevel(logging.INFO)
-        app.logger.setLevel(logging.INFO)
-    else:
-        app.logger.setLevel(logging.ERROR)
+    
+    
+    app.logger.setLevel(logging.DEBUG)    
         
     app.logger.info('Application startup')
 

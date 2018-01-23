@@ -22,7 +22,7 @@ class CryptoInstrumentForm(FlaskForm):
 
 class MessageTypeForm(FlaskForm):
     name = StringField('Name', validators=[DataRequired(), Length(min=5)])
-    description = StringField('Description', validators=[DataRequired(), Length(min=20)])
+    description = StringField('Description', validators=[DataRequired()])
     submit = SubmitField('Save')
 
 class DataProviderSourceURLForm(FlaskForm):

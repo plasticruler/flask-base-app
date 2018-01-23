@@ -2,6 +2,7 @@ import os
 from flask_login import UserMixin
 from werkzeug.security import generate_password_hash, check_password_hash
 from app import db, login
+import datetime
 
 class BaseModel(db.Model):
     __abstract__ = True
@@ -9,6 +10,8 @@ class BaseModel(db.Model):
     created_on = db.Column(db.DateTime, default=db.func.now())
     updated_on = db.Column(db.DateTime, default=db.func.now(), onupdate=db.func.now())
     is_deleted = db.Column(db.Boolean, default=False)
+    def convert_unix_to_datetime(self, epoch):
+        return datetime.datetime.fromtimestamp(epoch)
 
 class User(UserMixin, BaseModel):    
     __tablename__ = 'user'
