@@ -15,11 +15,13 @@ There is a lot of work to be done, and maybe my objective is not to finish this 
 + datepicker widget in flask-bootstrap
 + charts in flask (https://github.com/mher/chartkick.py)
 + paginate sqlachemy results in generic list form
-+ download and read .json file, then populate table using sqlalchemy
++ download and read json file, then populate table using sqlalchemy
 + use logging
 + use configuration stored in prod or dev config files (dev.env containing passwords not checked in)
 + set environment variables as config items
-+ use blueprints and pull app object
++ use blueprints
++ download content in configured urls
++ basic bash scripting, especially setting up virtualenv environment to run flask app cli 
 
 # Meta
 I started this project after leaning things in this video https://www.youtube.com/watch?v=8aTnmsDMldY, which I found to be pretty unusable once you dig into it. Instead I bought Miguel Grinberg's latest [flask mega tutorial](https://learn.miguelgrinberg.com/) book and am using that as a reference. USD 15, great bargain for what you end up learning. 
