@@ -8,6 +8,9 @@
                 <table class="table table-striped">
                     <tr>
                         <th>
+                                Id
+                        </th>
+                        <th>
                             Message Type
                         </th>     
                         <th>Description</th>               
@@ -15,6 +18,7 @@
                     {%if message_types%}
                     {%for item in message_types%}
                     <tr>
+                        <td>{{item.id}}</td>
                         <td>{{item.name}}</td>
                         <td>{{item.description}}</td>                    
                     </tr>

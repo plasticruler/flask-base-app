@@ -51,12 +51,12 @@ def fiatcurrency():
     if form.validate_on_submit():
         c = Currency()
         c.name = form.name.data
-        c.code = form.code.data
+        c.symbol = form.code.data
         db.session.add(c)
         db.session.commit()
         form = CryptoFiatCurrencyForm()
-        flash('New currency added {} ({}).'.format(c.name, c.code))        
-    return render_template('crypto/currency.html', form=form)
+        flash('New currency added {} ({}).'.format(c.name, c.symbol))        
+    return render_template('crypto/currency.html', form=form, currencies=Currency.query.order_by('name'))
 
 
 @bp.route('/dataprovidersourceurl', methods=['GET','POST'])
@@ -89,6 +89,8 @@ def dataprovidersourceurl():
 @login_required
 def messagetype():
     form = MessageTypeForm()
+    providers = [(c.id,c.name) for c in DataProvider.query.order_by('name')]
+    form.dataprovider_id.choices = providers
     if form.validate_on_submit():
         m = MessageType()
         m.description = form.description.data
@@ -97,7 +99,7 @@ def messagetype():
         db.session.commit()
         flash('Message type added.')
         form = MessageTypeForm()
-    return render_template('crypto/messagetype.html',form=form, message_types=MessageType.query.order_by('name'))
+    return render_template('crypto/messagetype.html',form=form, providers=providers, message_types=MessageType.query.order_by('name'))
 
 @bp.route('/dataprovider', methods=['GET','POST'])
 @login_required

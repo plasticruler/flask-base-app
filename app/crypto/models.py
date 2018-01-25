@@ -31,9 +31,9 @@ instrument_exchange_table = db.Table('instrument_exchange',
 class Currency(BaseModel):
     __tablename__ = 'currency'
     name = db.Column(db.String(20),unique=True,nullable=False)
-    code = db.Column(db.String(3), unique=True, nullable=False)
+    symbol = db.Column(db.String(3), unique=True, nullable=False)
     def __repr__(self):
-        return "{} ({})".format(self.name,self.code)
+        return "{} ({})".format(self.name,self.symbol)
 
 
 
@@ -55,8 +55,33 @@ class CryptoInstrumentPrice(BaseModel):
     interval = db.Column(db.Integer,nullable=False)
     retreived_datetime = db.Column(db.DateTime)
     def __repr__(self):
-        return "At {} 1 {} cost {} in {} an interval {}".format(self.retreived_datetime, CryptoInstrument.query.get(self.cryptoinstrument_id).name, self.price, self.currency_id, self.interval)
-        
+        return "At {} 1 {} cost {} in {} and interval {}".format(self.retreived_datetime, CryptoInstrument.query.get(self.cryptoinstrument_id).name, self.price, Currency.query.get(self.currency_id), self.interval)
+
+class CryptoInstrumentPriceMarketData(BaseModel):
+    __tablename__ = 'cryptoinstrumentpricemarketdatas'
+    cryptoinstrument_id = db.Column(db.Integer,db.ForeignKey('cryptoinstrument.id'),nullable=False)    
+    dataprovider_id = db.Column(db.Integer,db.ForeignKey('dataprovider.id'),nullable=True)
+    price = db.Column(db.Float(precision=10,asdecimal=True))    
+    currency_id = db.Column(db.Integer,db.ForeignKey('currency.id'), nullable=False)
+    interval = db.Column(db.Integer,nullable=False)
+    retreived_datetime = db.Column(db.DateTime)
+    volume_from = db.Column(db.Integer)
+    volume_to = db.Column(db.Integer)
+    price_open = db.Column(db.Float(precision=10,asdecimal=True))
+    price_close = db.Column(db.Float(precision=10,asdecimal=True))
+    price_low = db.Column(db.Float(precision=10,asdecimal=True))
+    def __init__(self,cip):
+        if not type(cip) is CryptoInstrumentPrice:
+            raise 'Incorrect type used to initialise CryptoInstrumentPriceMarketData'
+        self.cryptoinstrument_id = cip.cryptoinstrument_id    
+        self.dataprovider_id = cip.dataprovider_id
+        self.price = cip.price
+        self.currency_id = cip.currency_id
+        self.retreived_datetime = cip.retreived_datetime 
+        self.interval = cip.interval  
+    def __repr__(self):
+        return "Instrument {} at {}".format(CryptoInstrument.query.get(self.cryptoinstrument_id),self.retreived_datetime) 
+            
 
 class MessageType(BaseModel):    
     __tablename__ = 'messagetype'
@@ -80,7 +105,7 @@ class ProviderTransactionRequest(BaseModel):
     __tablename__ = 'providertransactionrequest'
     url = db.Column(db.String(1024))        
     messagetype_id = db.Column(db.Integer,db.ForeignKey('messagetype.id'),nullable=False)
-    content = db.Column(db.String(8096))       
+    content = db.Column(db.String(16384))       
     messagetype = db.relationship('MessageType',backref='providertransactionrequest') 
     processed = db.Column(db.Boolean(), default=False)   
 

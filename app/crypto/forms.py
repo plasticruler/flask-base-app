@@ -22,6 +22,7 @@ class CryptoInstrumentForm(FlaskForm):
 
 class MessageTypeForm(FlaskForm):
     name = StringField('Name', validators=[DataRequired(), Length(min=5)])
+    dataprovider_id = SelectField('Data Provider',choices=[],coerce=int)
     description = StringField('Description', validators=[DataRequired()])
     submit = SubmitField('Save')
 

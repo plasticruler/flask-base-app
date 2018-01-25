@@ -45,8 +45,8 @@ def create_app(config_name='dev'):
     bootstrap.init_app(app)
     app.extensions['bootstrap']['cdns']['jquery'] = WebCDN('//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/')
     mail.init_app(app)
-    login.init_app(app)
-    logging.basicConfig()
+    login.init_app(app)    
+    logging.basicConfig(format='%(asctime)s %(message)s')
 
 
     from app.errors import bp as errors_bp
