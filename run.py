@@ -233,3 +233,6 @@ def make_shell_context():
     return {'db':db, 'User': User,'Expense':Expense, 'ExpenseType':ExpenseType, \
             'CryptoExchange':CryptoExchange, 'CryptoInstrument':CryptoInstrument,'ProviderTransactionRequest':ProviderTransactionRequest, \
             'DataProviderSourceUrl':DataProviderSourceUrl, 'DataProvider':DataProvider, 'CryptoInstrumentPriceMarketData':CryptoInstrumentPriceMarketData}
+
+if __name__=='__main__':
+    app.run()
