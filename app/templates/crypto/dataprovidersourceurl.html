@@ -9,10 +9,7 @@
             </div>
         <div class="col-md-8">
                 <table class="table table-striped">
-                        <tr>
-                            <th>
-                                Provider Name
-                            </th>
+                        <tr>                            
                             <th>
                                 Message Type
                             </th>
@@ -34,8 +31,7 @@
                         </tr>                
                         {%if provider_sources%}
                         {%for item in provider_sources%}
-                        <tr>
-                            <td>{{item.dataprovider.name}}</td>
+                        <tr>                            
                             <td>{{item.messagetype.name}}</td>
                             <td>{{item.url}}</td>     
                             <td>{{item.description}}</td>     

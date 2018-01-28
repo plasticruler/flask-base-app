@@ -31,6 +31,5 @@ class DevConfig(Config):
     
 
 config = {
-    'dev':DevConfig,    
-    'default': DevConfig
+    'dev':DevConfig
 }

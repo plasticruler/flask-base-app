@@ -62,9 +62,7 @@ def fiatcurrency():
 @bp.route('/dataprovidersourceurl', methods=['GET','POST'])
 @login_required
 def dataprovidersourceurl():
-    form = DataProviderSourceURLForm()
-    providers = [(c.id,c.name) for c in DataProvider.query.order_by('name')]
-    form.dataprovider_id.choices = providers
+    form = DataProviderSourceURLForm()    
     auth_methods = []
     auth_methods.append((-1,'Make a selection'))
     auth_methods.append((0,'http-basic-auth')) 
@@ -74,8 +72,7 @@ def dataprovidersourceurl():
     if form.validate_on_submit():
         dps = DataProviderSourceUrl()
         dps.description = form.description.data
-        dps.url = form.url.data
-        dps.dataprovider_id = int(form.dataprovider_id.data)
+        dps.url = form.url.data        
         dps.auth_method = int(form.auth_method.data)
         dps.auth_password = form.auth_password.data
         dps.auth_user = form.auth_user.data
@@ -95,6 +92,7 @@ def messagetype():
         m = MessageType()
         m.description = form.description.data
         m.name = form.name.data
+        m.dataprovider_id = form.dataprovider_id.data
         db.session.add(m)
         db.session.commit()
         flash('Message type added.')

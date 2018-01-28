@@ -40,7 +40,7 @@ class Currency(BaseModel):
 class DataProvider(BaseModel):
     __tablename__ = 'dataprovider'
     name = db.Column(db.String(80), unique=True)    
-    urls = db.relationship('DataProviderSourceUrl',backref='dataprovider',lazy='dynamic')
+    #urls = db.relationship('DataProviderSourceUrl',backref='dataprovider',lazy='dynamic')
     is_active = db.Column(db.Boolean(), default=False)
     def __repr__(self):
         return self.name
@@ -97,7 +97,8 @@ class DataProviderSourceUrl(BaseModel):
     auth_password =db.Column(db.String(80))
     auth_method = db.Column(db.Integer, nullable=False)
     use_authentication = db.Column(db.Boolean())
-    dataprovider_id = db.Column(db.Integer,db.ForeignKey('dataprovider.id'), nullable=False)
+    auto_added = db.Column(db.Boolean(),default=False)
+    #dataprovider_id = db.Column(db.Integer,db.ForeignKey('dataprovider.id'), nullable=False)
     messagetype_id = db.Column(db.Integer, db.ForeignKey('messagetype.id'), nullable=False)
     messagetype = db.relationship('MessageType',backref='dataprovidersourceurl')    
 

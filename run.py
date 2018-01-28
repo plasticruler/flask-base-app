@@ -5,7 +5,7 @@ from app.crypto.models import *
 from flask_migrate import Migrate
 import os
 import json
-from celery import Celery
+
 import click
 from app.utils import DownloadURL
 from app.provider_tracking import PTR
@@ -72,7 +72,9 @@ def populatecointypedata():
             db.session.commit()
             app.logger.debug("At {} of {} coins.".format(i,count))         
             #app.logger.info("Added coin {} ({}) {} of {}.".format(unicode(ci.name),unicode(ci.symbol), i,count))
-
+@app.cli.command('load-base-data')
+def loadbasedata():
+    pass
 @app.cli.command('set-instruments-for-price-tracking')
 def setinstrumentfortracking():
     app.logger.info("Reset track_price on tracked instruments.")
@@ -83,8 +85,20 @@ def setinstrumentfortracking():
         ci.track_price = True        
         app.logger.info("Enable price tracking for '{}'".format(c))
         db.session.add(ci)
+        app.logger.info('Creating tracking urls')
+        #s = DataProviderSourceUrl.query().filter
+        intervals = ({4:'hourly'},{5:'day'})
+        for i in intervals:
+            msg_type = MessageType.query.get(i.key) #hourly
+            dpsu = DataProviderSourceUrl(auto_added=True)
+            dpsu.messagetype_id = msg_type.id
+            dpsu.url = 'https://min-api.cryptocompare.com/data/histo{}?fsym={}&tsym=USD&limit=480&e=CCCAGG'.format()
+            dpsu.description = "Hourly for {}".format(c)
+            print dpsu.url      
+            #db.session.add(dpsu)      
+        
     app.logger.debug("Instrument price tracking commiting...")
-    db.session.commit()
+    #db.session.commit()
     app.logger.debug("All records committed.")
     
 
@@ -144,6 +158,37 @@ def processdata():
                 price.currency_id = Currency.query.filter(Currency.symbol==params['tsym'][0]).one().id
                 price.dataprovider_id = ptr.messagetype.dataprovider_id
                 price.interval=2                   
+                price.price = float(d["close"])                
+                price.retreived_datetime =  datetime.datetime.fromtimestamp(d["time"])                         
+                
+                market_data = CryptoInstrumentPriceMarketData(price)
+                market_data.volume_from = int(d["volumefrom"])
+                market_data.volume_to = int(d["volumeto"])
+                market_data.price_open = float(d["open"])
+                market_data.price_close = float(d["close"])
+                market_data.price_low = float(d["low"])
+                market_data.price_high = float(d["high"])
+                if (CryptoInstrumentPriceMarketData.query.filter(CryptoInstrumentPriceMarketData.retreived_datetime==market_data.retreived_datetime) \
+                 .filter(CryptoInstrumentPriceMarketData.cryptoinstrument_id==market_data.cryptoinstrument_id) \
+                 .filter(CryptoInstrumentPriceMarketData.interval==market_data.interval).first() is None):
+                    db.session.add(market_data)
+                    db.session.commit()
+                    print market_data                                 
+            ptr.processed = True
+            db.session.add(ptr)
+            db.session.commit()
+        
+        if ptr.messagetype_id==6: #hourly, aggregate=3, every 3 hours (or just leave out for hourly)
+            params = urlparse.parse_qs(urlparse.urlparse(unicode(ptr.url)).query)
+            data = json.loads(ptr.content)
+            data = data["Data"]
+            for d in data:         
+                price = CryptoInstrumentPrice()
+                instrument = CryptoInstrument.query.filter(CryptoInstrument.symbol==params['fsym'][0]).one()                
+                price.cryptoinstrument_id = instrument.id                
+                price.currency_id = Currency.query.filter(Currency.symbol==params['tsym'][0]).one().id
+                price.dataprovider_id = ptr.messagetype.dataprovider_id
+                price.interval=3                  
                 price.price = float(d["close"])                
                 price.retreived_datetime =  datetime.datetime.fromtimestamp(d["time"])                         
                 

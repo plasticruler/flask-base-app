@@ -26,8 +26,7 @@ class MessageTypeForm(FlaskForm):
     description = StringField('Description', validators=[DataRequired()])
     submit = SubmitField('Save')
 
-class DataProviderSourceURLForm(FlaskForm):
-    dataprovider_id = SelectField('Data Provider',choices=[],coerce=int)
+class DataProviderSourceURLForm(FlaskForm):    
     messagetype_id = SelectField('Message Type', choices=[], coerce=int)
     url = StringField('Source URL', validators=[DataRequired(), Length(min=15)])
     description = StringField('Description')
