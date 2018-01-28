@@ -44,4 +44,8 @@ this creates the required database tables.
 
 ## Step 5 - Run set up (mandatory)
 
-Now you need to configure the coins database and set up download urls for the download-data task.
+Now you need to configure the coins database and set up download urls for the download-data task. Enter
+```
+flask download-coin-data
+flask load-coins
+```
