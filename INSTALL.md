@@ -48,4 +48,15 @@ Now you need to configure the coins database and set up download urls for the do
 ```
 flask download-coin-data
 flask load-coins
+flask load-download-urls
+flask process-data
 ```
+
+## Step 6 - Run app
+You can run the app by entering
+```
+flask run
+```
+Then go to http://localhost:5000/index
+
+You will need to register an account.
