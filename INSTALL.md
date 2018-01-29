@@ -52,6 +52,8 @@ flask load-download-urls
 flask process-data
 ```
 
+(I'm not sure how to get this part to work on Windows)
+
 ## Step 6 - Run app
 You can run the app by entering
 ```
