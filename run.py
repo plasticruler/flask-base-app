@@ -14,7 +14,7 @@ import sys
 import urlparse
 import datetime
 
-app = create_app(os.getenv('FLASK_CONFIG') or 'default')
+app = create_app(os.getenv('FLASK_CONFIG') or 'dev')
 migrate = Migrate(app,db)
 COIN_FILENAME = 'coins.json'
 
@@ -38,6 +38,9 @@ def downloadcoindata():
 
 @app.cli.command('load-coins')
 def populatecointypedata():    
+    if not os.path.isfile(COIN_FILENAME):
+        app.logger.error('{} file not found. Have you run job download-coin-data ?'.format(COIN_FILENAME))
+        return
     app.logger.info("Reprocessing the {} file.".format(COIN_FILENAME))
     coin_social_data_url = "https://www.cryptocompare.com/api/data/coinsnapshotfullbyid/?id={}"    
     with open(COIN_FILENAME) as json_data:
@@ -72,10 +75,8 @@ def populatecointypedata():
             db.session.commit()
             app.logger.debug("At {} of {} coins.".format(i,count))         
             #app.logger.info("Added coin {} ({}) {} of {}.".format(unicode(ci.name),unicode(ci.symbol), i,count))
-@app.cli.command('load-base-data')
-def loadbasedata():
-    pass
-@app.cli.command('set-instruments-for-price-tracking')
+    app.logger.info('Procesing of {} file completed.'.format(COIN_FILENAME))
+@app.cli.command('load-download-urls')
 def setinstrumentfortracking():
     app.logger.info("Reset track_price on tracked instruments.")
     codes = ['ETH','BCH','BTG','EOS','LTC','NMC','DASH','ZEC','XRP','BTC','IOT','XLM','TRX','ICX','XMR','TRX']
@@ -85,22 +86,22 @@ def setinstrumentfortracking():
         ci.track_price = True        
         app.logger.info("Enable price tracking for '{}'".format(c))
         db.session.add(ci)
-        app.logger.info('Creating tracking urls')
-        #s = DataProviderSourceUrl.query().filter
-        intervals = ({4:'hourly'},{5:'day'})
-        for i in intervals:
-            msg_type = MessageType.query.get(i.key) #hourly
+        app.logger.info('Creating tracking urls for {}'.format(c))        
+        intervals = {5:'hour',6:'day'}
+        for k,v in intervals.items():                         
+            msg_type = MessageType.query.get(k) #hourly
             dpsu = DataProviderSourceUrl(auto_added=True)
             dpsu.messagetype_id = msg_type.id
-            dpsu.url = 'https://min-api.cryptocompare.com/data/histo{}?fsym={}&tsym=USD&limit=480&e=CCCAGG'.format()
-            dpsu.description = "Hourly for {}".format(c)
-            print dpsu.url      
-            #db.session.add(dpsu)      
-        
-    app.logger.debug("Instrument price tracking commiting...")
-    #db.session.commit()
-    app.logger.debug("All records committed.")
-    
+            dpsu.auth_method = -1
+            dpsu.url = 'https://min-api.cryptocompare.com/data/histo{}?fsym={}&tsym=USD&limit=480&e=CCCAGG'.format(v,c)
+            dpsu.description = "cryptocompare {} for {}".format(v,c)
+            app.logger.info('Create tracking url {} '.format(dpsu.url))   
+            if not DataProviderSourceUrl.query.filter(DataProviderSourceUrl.url==dpsu.url).first()==None:
+                app.logger.info('Not adding {}'.format(dpsu.url))
+                continue       
+            db.session.add(dpsu)      
+        db.session.commit()
+    app.logger.info('Tracking urls creation completed.')      
 
 @app.cli.command('get-latest-prices')
 def getlatestpricemarkinactive():    
@@ -129,7 +130,8 @@ def processdata():
     app.logger.info("Processing downloaded price data.")
     unprocessedptrs = ProviderTransactionRequest.query.filter(ProviderTransactionRequest.processed==False)     
     for ptr in unprocessedptrs:  
-        if ptr.messagetype_id ==4:           
+        if ptr.messagetype_id ==4:     
+            print ptr.content      
             params = urlparse.parse_qs(urlparse.urlparse(unicode(ptr.url)).query)
             price_obj = json.loads(ptr.content)                       
             for c in params['tsyms'][0].split(','): #each currency
