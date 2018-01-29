@@ -25,7 +25,7 @@ Enter the command `pip install -r requirements.txt` into the command prompt. Thi
 
 ## Step 2 - Create a database (optional)
 
-This step is optional as the application will use (sqlite)[http://www.sqlite.org]. Don't worry about installing that part, it comes with python. You know (mysql)[http://www.mysql.com] right?
+This step is optional as the application will use [sqlite](http://www.sqlite.org). Don't worry about installing that part, it comes with python. You know [mysql](http://www.mysql.com) right?
 
 ## Step 3 - Configuration time (mandatory)
 
