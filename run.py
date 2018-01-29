@@ -76,6 +76,7 @@ def populatecointypedata():
             app.logger.debug("At {} of {} coins.".format(i,count))         
             #app.logger.info("Added coin {} ({}) {} of {}.".format(unicode(ci.name),unicode(ci.symbol), i,count))
     app.logger.info('Procesing of {} file completed.'.format(COIN_FILENAME))
+    
 @app.cli.command('load-download-urls')
 def setinstrumentfortracking():
     app.logger.info("Reset track_price on tracked instruments.")
