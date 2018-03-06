@@ -1,15 +1,14 @@
 from flask import render_template, redirect, url_for, flash, request
 from flask_login import login_user, logout_user, current_user, login_required
-
-from flask_paginate import Pagination, get_page_args
-
 from app import db
+from sqlalchemy import func, desc
+from app.crypto.models import *
+
 from app.config import *
 from app.crypto import bp
 from app.crypto.forms import *
+from flask_paginate import Pagination, get_page_args
 
-from app.crypto.models import *
-from sqlalchemy import func, desc
 
 from flask import current_app as app
 

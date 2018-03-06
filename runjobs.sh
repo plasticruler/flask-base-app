@@ -17,7 +17,7 @@
   }
 
 say @b@green[[Activating virtualenv]]
-source .venv/bin/activate
+source /home/marmite/dev/flask-base-app/.venv/bin/activate
 say @b@green[[Set environment variables]]
 export FLASK_APP="run.py"
 export FLASK_DEBUG=1
