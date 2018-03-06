@@ -25,7 +25,7 @@ Enter the command `pip install -r requirements.txt` into the command prompt. Thi
 
 ## Step 2 - Create a database (optional)
 
-This step is optional as the application will use (sqlite)[http://www.sqlite.org]. Don't worry about installing that part, it comes with python. You know (mysql)[http://www.mysql.com] right?
+This step is optional as the application will use [sqlite](http://www.sqlite.org). Don't worry about installing that part, it comes with python. You know [mysql](http://www.mysql.com) right?
 
 ## Step 3 - Configuration time (mandatory)
 
@@ -48,4 +48,17 @@ Now you need to configure the coins database and set up download urls for the do
 ```
 flask download-coin-data
 flask load-coins
+flask load-download-urls
+flask process-data
 ```
+
+(I'm not sure how to get this part to work on Windows)
+
+## Step 6 - Run app
+You can run the app by entering
+```
+flask run
+```
+Then go to http://localhost:5000/index
+
+You will need to register an account.
