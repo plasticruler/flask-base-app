@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
-
-
+appdir=/home/pi/dev/flask-base-app/
+oldfolder=$(pwd)
  say() {
      echo "$@" | sed \
              -e "s/\(\(@\(red\|green\|yellow\|blue\|magenta\|cyan\|white\|reset\|b\|u\)\)\+\)[[]\{2\}\(.*\)[]]\{2\}/\1\4@reset/g" \
@@ -17,11 +17,12 @@
   }
 
 say @b@green[[Activating virtualenv]]
-source .venv/bin/activate
+source "$appdir.venv/bin/activate"
 say @b@green[[Set environment variables]]
 export FLASK_APP="run.py"
 export FLASK_DEBUG=1
 say @b@green[[Start job download-data]]
+cd $appdir
 flask download-data
 say @b@green[[Start job get-latest-prices]]
 flask get-latest-prices
