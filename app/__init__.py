@@ -11,6 +11,7 @@ import chartkick
 import logging
 from logging.handlers import SMTPHandler
 from flask_bootstrap import Bootstrap, WebCDN
+from flask_restful import Api, Resource
 
 
 db = SQLAlchemy()
@@ -20,11 +21,13 @@ login.login_view = 'auth.login'
 login.login_message = 'Please log in to access this page.'
 mail = Mail()
 bootstrap = Bootstrap()
+api = Api()
 
 
 def create_app(config_name='dev'):
     app = Flask(__name__, static_folder='./static')
     config[config_name].init_app(app)
+    log_format = '%(asctime)s %(levelname)s: %(message)s [in %(pathname)s:%(lineno)d]'
 
     app.config.from_object(config[config_name])  
     
@@ -34,7 +37,7 @@ def create_app(config_name='dev'):
     app.extensions['bootstrap']['cdns']['jquery'] = WebCDN('//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/')
     mail.init_app(app)
     login.init_app(app)    
-    logging.basicConfig(format='%(asctime)s %(message)s')
+    api.init_app(app)
 
 
     from app.errors import bp as errors_bp
@@ -74,18 +77,16 @@ def create_app(config_name='dev'):
         os.mkdir('logs')
     file_handler = RotatingFileHandler('logs/application.log', maxBytes=10240, backupCount=10)
     file_handler.setFormatter(logging.Formatter(
-        '%(asctime)s %(levelname)s: %(message)s '
-        '[in %(pathname)s:%(lineno)d]'))
+        log_format))
     file_handler.setLevel(logging.DEBUG)
     app.logger.addHandler(file_handler)
 
     #sqlalchemy sqlengine logging
     if app.config['SQLALCHEMY_ECHO']:
-        logging.getLogger('sqlalchemy.engine').setLevel(logging.INFO)
-    
+        logging.getLogger('sqlalchemy.engine').setLevel(logging.INFO)    
     
     app.logger.setLevel(logging.DEBUG)    
-        
+    formatter = logging.Formatter(log_format)
+    logging.getLogger('app').handlers[0].setFormatter(formatter)    
     app.logger.info('Application startup')
-
     return app

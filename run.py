@@ -2,10 +2,11 @@
 from app import create_app, db
 from app.models import *
 from app.crypto.models import *
+from app.crypto.queries import *
 from flask_migrate import Migrate
 import os
 import json
-
+from sqlalchemy import desc
 import click
 from app.utils import DownloadURL
 from app.provider_tracking import PTR
@@ -76,6 +77,7 @@ def populatecointypedata():
             app.logger.debug("At {} of {} coins.".format(i,count))         
             #app.logger.info("Added coin {} ({}) {} of {}.".format(unicode(ci.name),unicode(ci.symbol), i,count))
     app.logger.info('Procesing of {} file completed.'.format(COIN_FILENAME))
+
 @app.cli.command('load-download-urls')
 def setinstrumentfortracking():
     app.logger.info("Reset track_price on tracked instruments.")
@@ -125,13 +127,21 @@ def getlatestpricemarkinactive():
                 app.logger.info("No price so setting price tracking off for coin {}".format(coin))
         print data
 
+@app.cli.command('print-last-pdr')
+def printlastpdr():
+    pdr = ProviderTransactionRequest.query.order_by(desc('id')).first().created_on
+    print pdr    
+@app.cli.command('last-10-prices')
+def getlast10prices():    
+    for i in is_coin_increasing_over_interval(1315,3):
+        print i
+
 @app.cli.command('process-data')
 def processdata():
     app.logger.info("Processing downloaded price data.")
     unprocessedptrs = ProviderTransactionRequest.query.filter(ProviderTransactionRequest.processed==False)     
     for ptr in unprocessedptrs:  
-        if ptr.messagetype_id ==4:     
-            print ptr.content      
+        if ptr.messagetype_id ==4:   #instant price       
             params = urlparse.parse_qs(urlparse.urlparse(unicode(ptr.url)).query)
             price_obj = json.loads(ptr.content)                       
             for c in params['tsyms'][0].split(','): #each currency
@@ -143,13 +153,12 @@ def processdata():
                 price.interval=1                
                 price.price = float(price_obj[c])                
                 price.retreived_datetime = ptr.created_on                                              
-                db.session.add(price)   
-                print price             
+                db.session.add(price)               
             ptr.processed = True
             db.session.add(ptr)
             db.session.commit() 
         
-        if ptr.messagetype_id==5: #hourly, aggregate=3, every 3 hours (or just leave out for hourly)
+        if ptr.messagetype_id==5: #hourly
             params = urlparse.parse_qs(urlparse.urlparse(unicode(ptr.url)).query)
             data = json.loads(ptr.content)
             data = data["Data"]
@@ -161,7 +170,8 @@ def processdata():
                 price.dataprovider_id = ptr.messagetype.dataprovider_id
                 price.interval=2                   
                 price.price = float(d["close"])                
-                price.retreived_datetime =  datetime.datetime.fromtimestamp(d["time"])                         
+                price.retreived_datetime =  datetime.datetime.fromtimestamp(d["time"]) 
+
                 
                 market_data = CryptoInstrumentPriceMarketData(price)
                 market_data.volume_from = int(d["volumefrom"])
@@ -170,17 +180,18 @@ def processdata():
                 market_data.price_close = float(d["close"])
                 market_data.price_low = float(d["low"])
                 market_data.price_high = float(d["high"])
-                if (CryptoInstrumentPriceMarketData.query.filter(CryptoInstrumentPriceMarketData.retreived_datetime==market_data.retreived_datetime) \
-                 .filter(CryptoInstrumentPriceMarketData.cryptoinstrument_id==market_data.cryptoinstrument_id) \
-                 .filter(CryptoInstrumentPriceMarketData.interval==market_data.interval).first() is None):
+                if (CryptoInstrumentPriceMarketData.query.filter(
+                    CryptoInstrumentPriceMarketData.retreived_datetime==market_data.retreived_datetime,
+                    CryptoInstrumentPriceMarketData.cryptoinstrument_id==market_data.cryptoinstrument_id,
+                    CryptoInstrumentPriceMarketData.interval==price.interval).first() is None):
                     db.session.add(market_data)
-                    db.session.commit()
-                    print market_data                                 
+                    db.session.commit()     
+                                                        
             ptr.processed = True
             db.session.add(ptr)
             db.session.commit()
         
-        if ptr.messagetype_id==6: #hourly, aggregate=3, every 3 hours (or just leave out for hourly)
+        if ptr.messagetype_id==6: #daily
             params = urlparse.parse_qs(urlparse.urlparse(unicode(ptr.url)).query)
             data = json.loads(ptr.content)
             data = data["Data"]
@@ -201,12 +212,13 @@ def processdata():
                 market_data.price_close = float(d["close"])
                 market_data.price_low = float(d["low"])
                 market_data.price_high = float(d["high"])
-                if (CryptoInstrumentPriceMarketData.query.filter(CryptoInstrumentPriceMarketData.retreived_datetime==market_data.retreived_datetime) \
-                 .filter(CryptoInstrumentPriceMarketData.cryptoinstrument_id==market_data.cryptoinstrument_id) \
-                 .filter(CryptoInstrumentPriceMarketData.interval==market_data.interval).first() is None):
+                if (CryptoInstrumentPriceMarketData.query.filter(
+                    CryptoInstrumentPriceMarketData.retreived_datetime==market_data.retreived_datetime,
+                    CryptoInstrumentPriceMarketData.cryptoinstrument_id==market_data.cryptoinstrument_id,
+                    CryptoInstrumentPriceMarketData.interval==price.interval).first() is None):
                     db.session.add(market_data)
-                    db.session.commit()
-                    print market_data                                 
+                    db.session.commit()   
+                                               
             ptr.processed = True
             db.session.add(ptr)
             db.session.commit()        
@@ -229,6 +241,7 @@ def processdata():
 def getmarketsummaryice3x(content, pair):        
     data = content["response"]["entities"]
     return [x for x in data if str(x['pair_name'])==pair]
+
 
 @app.shell_context_processor
 def make_shell_context():

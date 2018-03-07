@@ -97,8 +97,7 @@ class DataProviderSourceUrl(BaseModel):
     auth_password =db.Column(db.String(80))
     auth_method = db.Column(db.Integer, nullable=False)
     use_authentication = db.Column(db.Boolean())
-    auto_added = db.Column(db.Boolean(),default=False)
-    #dataprovider_id = db.Column(db.Integer,db.ForeignKey('dataprovider.id'), nullable=False)
+    auto_added = db.Column(db.Boolean(),default=False) 
     messagetype_id = db.Column(db.Integer, db.ForeignKey('messagetype.id'), nullable=False)
     messagetype = db.relationship('MessageType',backref='dataprovidersourceurl')    
 
@@ -109,6 +108,8 @@ class ProviderTransactionRequest(BaseModel):
     content = db.Column(db.String(16384))       
     messagetype = db.relationship('MessageType',backref='providertransactionrequest') 
     processed = db.Column(db.Boolean(), default=False)   
+
+
 
 
 

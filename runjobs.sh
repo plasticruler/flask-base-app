@@ -17,7 +17,11 @@ oldfolder=$(pwd)
   }
 
 say @b@green[[Activating virtualenv]]
+<<<<<<< HEAD
 source "$appdir.venv/bin/activate"
+=======
+source /home/marmite/dev/flask-base-app/.venv/bin/activate
+>>>>>>> a24bbe801f6a76a27c214f5ea2c502c4f53c7a80
 say @b@green[[Set environment variables]]
 export FLASK_APP="run.py"
 export FLASK_DEBUG=1
