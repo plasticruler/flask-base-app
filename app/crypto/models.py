@@ -108,6 +108,8 @@ class ProviderTransactionRequest(BaseModel):
     content = db.Column(db.String(16384))       
     messagetype = db.relationship('MessageType',backref='providertransactionrequest') 
     processed = db.Column(db.Boolean(), default=False)   
+    def __repr__(self):
+        return "Created {}. MessageType: {}".format(self.created_on,self.messagetype)
 
 
 

@@ -140,6 +140,7 @@ def processdata():
     app.logger.info("Processing downloaded price data.")
     unprocessedptrs = ProviderTransactionRequest.query.filter(ProviderTransactionRequest.processed==False)     
     for ptr in unprocessedptrs:  
+        app.logger.info('Processing {}'.format(ptr))
         if ptr.messagetype_id ==4:   #instant price       
             params = urlparse.parse_qs(urlparse.urlparse(unicode(ptr.url)).query)
             price_obj = json.loads(ptr.content)                       
