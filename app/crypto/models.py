@@ -88,6 +88,8 @@ class MessageType(BaseModel):
     name = db.Column(db.String(50), unique=True, nullable=False)
     description = db.Column(db.String(1024))
     dataprovider_id = db.Column(db.Integer,db.ForeignKey('dataprovider.id'),nullable=False)
+    def __repr__(self):
+        return "{}".format(self.name)
 
 class DataProviderSourceUrl(BaseModel):
     __tablename__ = 'dataprovidersourceurl'
