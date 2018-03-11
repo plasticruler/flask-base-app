@@ -131,8 +131,14 @@ def printlastptr():
     app.logger.info(ptr)    
 
 @app.cli.command('last-10-prices')
-def getlast10prices():    
-    for i in is_coin_increasing_over_interval(1315,2):
+@click.option('--symbol')
+@click.option('--interval')
+def getlast10prices(symbol, interval):
+    coin = CryptoInstrument.query.filter_by(symbol=symbol).first()
+    if coin is None:
+        app.logger.error('No such coin found ({})'.format(symbol))
+        return
+    for i in is_coin_increasing_over_interval(coin.id,interval):
         app.logger.info(i)
 
 @app.cli.command('process-data')
