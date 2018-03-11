@@ -48,8 +48,7 @@ def populatecointypedata():
         data = json.load(json_data) 
         count = len(data["Data"])
         i = 0
-        for d in data["Data"]:
-            #print data["Data"][d]
+        for d in data["Data"]:           
             i += 1
             ci = CryptoInstrument()            
             symbol = unicode(data["Data"][d]["Symbol"])
@@ -61,9 +60,8 @@ def populatecointypedata():
             ci.symbol = symbol
             ci.note = unicode(data["Data"][d]["FullName"])
             ci.foreign_id= int(data["Data"][d]["Id"])
-            ci.active = True   
-              
-            #print "Getting social data for {} at {}".format(ci.symbol, coin_social_data_url.format(ci.foreign_id))
+            ci.active = True                
+            
             coin_social_data = DownloadURL(coin_social_data_url.format(ci.foreign_id))()            
             coin_social_data = json.loads(coin_social_data['content'])
             coin_social_data = coin_social_data["Data"]["General"]
@@ -75,7 +73,7 @@ def populatecointypedata():
             db.session.add(ci)
             db.session.commit()
             app.logger.debug("At {} of {} coins.".format(i,count))         
-            #app.logger.info("Added coin {} ({}) {} of {}.".format(unicode(ci.name),unicode(ci.symbol), i,count))
+            
     app.logger.info('Procesing of {} file completed.'.format(COIN_FILENAME))
 
 @app.cli.command('load-download-urls')
@@ -125,16 +123,17 @@ def getlatestpricemarkinactive():
                 db.session.add(coin)
                 db.session.commit()
                 app.logger.info("No price so setting price tracking off for coin {}".format(coin))
-        print data
+        
 
-@app.cli.command('print-last-pdr')
-def printlastpdr():
-    pdr = ProviderTransactionRequest.query.order_by(desc('id')).first().created_on
-    print pdr    
+@app.cli.command('print-last-ptr')
+def printlastptr():
+    ptr = ProviderTransactionRequest.query.order_by(desc('id')).first().created_on
+    app.logger.info(ptr)    
+
 @app.cli.command('last-10-prices')
 def getlast10prices():    
     for i in is_coin_increasing_over_interval(1315,3):
-        print i
+        app.logger.info(i)
 
 @app.cli.command('process-data')
 def processdata():
@@ -171,7 +170,6 @@ def processdata():
                 price.interval=2                   
                 price.price = float(d["close"])                
                 price.retreived_datetime =  datetime.datetime.fromtimestamp(d["time"]) 
-
                 
                 market_data = CryptoInstrumentPriceMarketData(price)
                 market_data.volume_from = int(d["volumefrom"])
@@ -185,7 +183,8 @@ def processdata():
                     CryptoInstrumentPriceMarketData.cryptoinstrument_id==market_data.cryptoinstrument_id,
                     CryptoInstrumentPriceMarketData.interval==price.interval).first() is None):
                     db.session.add(market_data)
-                    db.session.commit()     
+                    db.session.commit()   
+                    app.logger.info("Record added {}".format(market_data))  
                                                         
             ptr.processed = True
             db.session.add(ptr)
@@ -218,18 +217,17 @@ def processdata():
                     CryptoInstrumentPriceMarketData.interval==price.interval).first() is None):
                     db.session.add(market_data)
                     db.session.commit()   
-                                               
+                    app.logger.debug("Record added {}".format(market_data))                                  
             ptr.processed = True
             db.session.add(ptr)
-            db.session.commit()        
+            db.session.commit()                 
         continue
         if ptr.messagetype.name == 'market depth' and ptr.dataprovider.name.strip()=='Ice3x':
             data = json.loads(ptr.content)            
             if not data["errors"]:
                 data = getmarketsummaryice3x(data,'eth/zar')
                 o.created_on
-                for d in data:
-                    print d
+                for d in data:                    
                     cip = CryptoInstrumentPrice()
                     cip.price = d["last_price"]                    
                     c = Currency.query.filter(Currency.symbol=='ZAR').first()                 

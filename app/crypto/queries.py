@@ -4,7 +4,9 @@ from app import db
 from sqlalchemy import func, desc
 from app.crypto.models import *
 
-def is_coin_increasing_over_interval(coin_id,interval=5): #default is hour    
-    return CryptoInstrumentPrice.query.filter_by(cryptoinstrument_id=coin_id, interval=interval).order_by(desc('created_on')).limit(10)
-
+def is_coin_increasing_over_interval(coin_id,interval=5): #default is hour 
+    print "here"    
+    result = CryptoInstrumentPriceMarketData.query.filter_by(cryptoinstrument_id=coin_id, interval=interval).order_by(desc('created_on')).limit(10).all()
+    print result
+    return result
       

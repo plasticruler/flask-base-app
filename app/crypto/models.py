@@ -58,7 +58,7 @@ class CryptoInstrumentPrice(BaseModel):
         return "At {} 1 {} cost {} in {} and interval {}".format(self.retreived_datetime, CryptoInstrument.query.get(self.cryptoinstrument_id).name, self.price, Currency.query.get(self.currency_id), self.interval)
 
 class CryptoInstrumentPriceMarketData(BaseModel):
-    __tablename__ = 'cryptoinstrumentpricemarketdatas'
+    __tablename__ = 'cryptoinstrumentpricemarketdata'
     cryptoinstrument_id = db.Column(db.Integer,db.ForeignKey('cryptoinstrument.id'),nullable=False)    
     dataprovider_id = db.Column(db.Integer,db.ForeignKey('dataprovider.id'),nullable=True)
     price = db.Column(db.Float(precision=10,asdecimal=True))    

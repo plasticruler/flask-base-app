@@ -87,6 +87,7 @@ def create_app(config_name='dev'):
     
     app.logger.setLevel(logging.DEBUG)    
     formatter = logging.Formatter(log_format)
-    logging.getLogger('app').handlers[0].setFormatter(formatter)    
+    logging.getLogger('app').handlers[0].setFormatter(formatter) 
+     
     app.logger.info('Application startup')
     return app
