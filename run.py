@@ -132,7 +132,7 @@ def printlastptr():
 
 @app.cli.command('last-10-prices')
 def getlast10prices():    
-    for i in is_coin_increasing_over_interval(1315,3):
+    for i in is_coin_increasing_over_interval(1315,2):
         app.logger.info(i)
 
 @app.cli.command('process-data')
@@ -183,8 +183,7 @@ def processdata():
                     CryptoInstrumentPriceMarketData.retreived_datetime==market_data.retreived_datetime,
                     CryptoInstrumentPriceMarketData.cryptoinstrument_id==market_data.cryptoinstrument_id,
                     CryptoInstrumentPriceMarketData.interval==price.interval).first() is None):
-                    db.session.add(market_data)
-                    db.session.commit()   
+                    db.session.add(market_data)                    
                     app.logger.info("Record added {}".format(market_data))  
                                                         
             ptr.processed = True
@@ -216,8 +215,7 @@ def processdata():
                     CryptoInstrumentPriceMarketData.retreived_datetime==market_data.retreived_datetime,
                     CryptoInstrumentPriceMarketData.cryptoinstrument_id==market_data.cryptoinstrument_id,
                     CryptoInstrumentPriceMarketData.interval==price.interval).first() is None):
-                    db.session.add(market_data)
-                    db.session.commit()   
+                    db.session.add(market_data)                    
                     app.logger.debug("Record added {}".format(market_data))                                  
             ptr.processed = True
             db.session.add(ptr)
