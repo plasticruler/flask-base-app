@@ -22,6 +22,8 @@ There is a lot of work to be done, and maybe my objective is not to finish this 
 + use blueprints
 + download content in configured urls
 + basic bash scripting, especially setting up virtualenv environment to run flask app cli 
++ data operations implementated as tasks that can be executed from a shell script (cron)
+
 
 # Meta
 I started this project after leaning things in this video https://www.youtube.com/watch?v=8aTnmsDMldY, which I found to be pretty unusable once you dig into it. Instead I bought Miguel Grinberg's latest [flask mega tutorial](https://learn.miguelgrinberg.com/) book and am using that as a reference. USD 15, great bargain for what you end up learning. 
