@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
-from app import create_app, db
+from app import create_app, db, mail
 from app.models import *
 from app.crypto.models import *
 from app.crypto.queries import *
+from flask_mail import Message
 from flask_migrate import Migrate
 import os
 import json
@@ -35,7 +36,7 @@ def downloadcoindata():
     data = data()['content']    
     with open(COIN_FILENAME,'w') as f:
         f.write(data)
-    app.logger.info("Data downloaded and written to '{}'".format(coin_file))
+    app.logger.info("Data downloaded and written to '{}'".format(COIN_FILENAME))
 
 @app.cli.command('load-coins')
 def populatecointypedata():    
@@ -128,6 +129,7 @@ def getlatestpricemarkinactive():
 @app.cli.command('print-last-ptr')
 def printlastptr():
     ptr = ProviderTransactionRequest.query.order_by(desc('id')).first().created_on
+    SendEmail(str(ptr),"Last PTR statistic")
     app.logger.info(ptr)    
 
 @app.cli.command('last-10-prices')
@@ -135,11 +137,28 @@ def printlastptr():
 @click.option('--interval')
 def getlast10prices(symbol, interval):
     coin = CryptoInstrument.query.filter_by(symbol=symbol).first()
+    m = []
     if coin is None:
         app.logger.error('No such coin found ({})'.format(symbol))
-        return
-    for i in is_coin_increasing_over_interval(coin.id,interval):
+        return        
+    for i in GetLastCoinPrices(coin.id,interval):
+        m.append(str(i))
         app.logger.info(i)
+    content = "\n".join(m)
+    s= "Last 10 prices email - {}".format(symbol)
+    SendEmail(content, mailsubject=s)
+
+@app.cli.command('test-sendmail')
+def TestSendEmail():
+    SendEmail('Helloo',app.config['ADMINS'])
+
+def SendEmail(message, mailsubject="No subject needed", recipients=None):
+    if recipients is None:
+        recipients = app.config['ADMINS']
+    app.logger.info('Sending email')
+    msg = Message(body=message,recipients=recipients, subject=mailsubject)
+    mail.send(msg)
+    app.logger.info('Sent.')
 
 @app.cli.command('process-data')
 def processdata():

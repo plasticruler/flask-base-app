@@ -80,7 +80,8 @@ class CryptoInstrumentPriceMarketData(BaseModel):
         self.retreived_datetime = cip.retreived_datetime 
         self.interval = cip.interval  
     def __repr__(self):
-        return "Instrument {} at {}".format(CryptoInstrument.query.get(self.cryptoinstrument_id),self.retreived_datetime) 
+        cus = Currency.query.get(self.currency_id).symbol 
+        return "Instrument {} at {} price was {} ({})".format(CryptoInstrument.query.get(self.cryptoinstrument_id),self.retreived_datetime, self.price, cus) 
             
 
 class MessageType(BaseModel):    

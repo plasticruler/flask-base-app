@@ -14,7 +14,7 @@ class Config(object):
     MAIL_USE_TLS = True
     MAIL_USERNAME = os.environ.get('MAIL_USERNAME')
     MAIL_PASSWORD = os.environ.get('MAIL_PASSWORD')
-    MAIL_DEFAULT_SENDER = os.environ.get('MAIL_SENDER')
+    MAIL_DEFAULT_SENDER = os.environ.get('MAIL_DEFAULT_SENDER')
     SECRET_KEY = os.environ.get('SECRET_KEY') 
     ADMINS = [MAIL_DEFAULT_SENDER]
     LOGIN_VIEW = 'auth.login'
