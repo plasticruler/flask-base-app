@@ -15,21 +15,23 @@ import codecs
 import sys
 import urlparse
 import datetime
+import itertools
 
 app = create_app(os.getenv('FLASK_CONFIG') or 'dev')
 migrate = Migrate(app,db)
 COIN_FILENAME = 'coins.json'
 
 @app.cli.command('download-data')
-def download():
-    dps = DataProviderSourceUrl.query.filter(DataProvider.is_active==True).order_by('dataprovider_id')
+@click.option('--messagetype')
+def download_data(messagetype):
+    dps = DataProviderSourceUrl.query.filter_by(is_deleted=False,messagetype_id=messagetype).order_by('dataprovider_id')
     for dp in dps:
         ptr = PTR(messagetype_id=dp.messagetype_id, url=dp.url, logger=app.logger)         
         u = DownloadURL(dp.url,ptr,logger=app.logger)
         u() #execute and save using in data request record
 
 @app.cli.command('download-coin-data')
-def downloadcoindata():    
+def download_coindata():    
     app.logger.info("Downloading coin data to file {}.".format(COIN_FILENAME))
     coins_url = 'https://www.cryptocompare.com/api/data/coinlist/'    
     data = DownloadURL(coins_url)
@@ -39,7 +41,7 @@ def downloadcoindata():
     app.logger.info("Data downloaded and written to '{}'".format(COIN_FILENAME))
 
 @app.cli.command('load-coins')
-def populatecointypedata():    
+def populate_coin_type_data():    
     if not os.path.isfile(COIN_FILENAME):
         app.logger.error('{} file not found. Have you run job download-coin-data ?'.format(COIN_FILENAME))
         return
@@ -78,7 +80,7 @@ def populatecointypedata():
     app.logger.info('Procesing of {} file completed.'.format(COIN_FILENAME))
 
 @app.cli.command('load-download-urls')
-def setinstrumentfortracking():
+def set_instruments_for_tracking():
     app.logger.info("Reset track_price on tracked instruments.")
     codes = ['ETH','BCH','BTG','EOS','LTC','NMC','DASH','ZEC','XRP','BTC','IOT','XLM','TRX','ICX','XMR','TRX']
     for c in codes:
@@ -105,7 +107,7 @@ def setinstrumentfortracking():
     app.logger.info('Tracking urls creation completed.')      
 
 @app.cli.command('get-latest-prices')
-def getlatestpricemarkinactive():    
+def get_latest_price_mark_inactive():    
     app.logger.info("Getting the instantaneous prices for tracked instruments using cryptocompare api.")
     base_url = "https://min-api.cryptocompare.com/data/price?fsym={}&tsyms=USD,ZAR"    
     cryptos = [(x.id, x.symbol) for x in CryptoInstrument.query.filter(CryptoInstrument.track_price)]  
@@ -127,41 +129,42 @@ def getlatestpricemarkinactive():
         
 
 @app.cli.command('print-last-ptr')
-def printlastptr():
+def print_last_ptr():
     ptr = ProviderTransactionRequest.query.order_by(desc('id')).first().created_on
     SendEmail(str(ptr),"Last PTR statistic")
     app.logger.info(ptr)    
 
-@app.cli.command('last-10-prices')
+@app.cli.command('last-prices')
 @click.option('--symbol')
 @click.option('--interval')
-def getlast10prices(symbol, interval):
+@click.option('--limit',default=10)
+def get_last_prices(symbol, interval,limit):
     coin = CryptoInstrument.query.filter_by(symbol=symbol).first()
     m = []
     if coin is None:
         app.logger.error('No such coin found ({})'.format(symbol))
+        SendMail("Invalid coin requested {}".format(symbol),mailsubject="Error")
         return        
-    for i in GetLastCoinPrices(coin.id,interval):
+    records = GetLastCoinPrices(coin.id, interval, limit)
+    for i in records: #price_close
         m.append(str(i))
         app.logger.info(i)
-    content = "\n".join(m)
-    s= "Last 10 prices email - {}".format(symbol)
-    SendEmail(content, mailsubject=s)
+    content = "\n".join(m)    
+    rising = all(earlier.price_close <= later.price_close for earlier,later in itertools.izip(records,records[1:]))    
+    s = "Last 10 prices email - {} (RISING: {})".format(symbol, rising)
+    app.logger.info(s)
+    send_email(content, mailsubject=s)
 
-@app.cli.command('test-sendmail')
-def TestSendEmail():
-    SendEmail('Helloo',app.config['ADMINS'])
-
-def SendEmail(message, mailsubject="No subject needed", recipients=None):
+def send_email(message, mailsubject="No subject needed", recipients=None):
     if recipients is None:
         recipients = app.config['ADMINS']
     app.logger.info('Sending email')
-    msg = Message(body=message,recipients=recipients, subject=mailsubject)
+    msg = Message(body=message,recipients=recipients, subject=app.config['APP_NAME'] + mailsubject)
     mail.send(msg)
     app.logger.info('Sent.')
 
 @app.cli.command('process-data')
-def processdata():
+def process_data():
     app.logger.info("Processing downloaded price data.")
     unprocessedptrs = ProviderTransactionRequest.query.filter(ProviderTransactionRequest.processed==False)     
     for ptr in unprocessedptrs:  
@@ -260,7 +263,7 @@ def processdata():
                 raise Exception('Error in json.') 
     app.logger.info("Data processed")
 
-def getmarketsummaryice3x(content, pair):        
+def get_market_summary_ice3x(content, pair):        
     data = content["response"]["entities"]
     return [x for x in data if str(x['pair_name'])==pair]
 

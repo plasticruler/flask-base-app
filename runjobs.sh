@@ -22,15 +22,18 @@ say @b@green[[Set environment variables]]
 export FLASK_APP="run.py"
 export FLASK_DEBUG=1
 say @b@green[[Start job download-data]]
+
 cd $appdir
-flask download-data
+flask download-data --messagetype $1
+
 say @b@green[[Start job get-latest-prices]]
 flask get-latest-prices
 say @b@green[[Start job process-data]]
 flask process-data
 say @b@green[[Job run complete...]]
 say @b@green[[Sending price reports]]
-flask last-10-prices --symbol BTC --interval 3
-flask last-10-prices --symbol ETH --interval 3
-flask last-10-prices --symbol LTC --interval 3
+
+flask last-prices --symbol BTC --interval $(($1-3))
+flask last-prices --symbol ETH --interval $(($1-3))
+flask last-prices --symbol LTC --interval $(($1-3))
 say @b@green[[Price reports sent]]

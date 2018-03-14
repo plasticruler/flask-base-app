@@ -23,4 +23,6 @@ class DownloadURL(object):
         if self.ptr:
             self.ptr.save(content)
         return {'url':self.url,'content':content}
+    def __repr__(self):
+        return 'Url {}'.format(self.url)
         

@@ -20,6 +20,7 @@ class Config(object):
     LOGIN_VIEW = 'auth.login'
     DEBUG = os.environ.get('FLASK_DEBUG') or False
     RECORDS_PER_PAGE = 30
+    APP_NAME = 'CyptoTrack:: '
     @staticmethod
     def init_app(app):
         pass
