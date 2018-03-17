@@ -2,7 +2,7 @@
 from app import create_app, db, mail
 from app.models import *
 from app.crypto.models import *
-import app.crypto.queries
+from app.crypto import queries
 from flask_mail import Message
 from flask_migrate import Migrate
 import os
@@ -130,7 +130,7 @@ def get_latest_price_mark_inactive():
 
 @app.cli.command('print-last-ptr')
 def print_last_ptr():
-    ptr = queries.last_ptr.created_on
+    ptr = queries.last_ptr().created_on
     send_email(str(ptr),"Last PTR statistic")
     app.logger.info(ptr)    
 
