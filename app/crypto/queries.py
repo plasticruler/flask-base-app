@@ -6,8 +6,10 @@ from app.crypto.models import *
 from functools import reduce
 
 
-
-def GetLastCoinPrices(coin_id,interval=3,recordlimit=10): #default is hour      
+def last_ptr():
+    return ProviderTransactionRequest.query.order_by(desc('id')).first()
+    
+def get_last_coin_prices(coin_id,interval=3,recordlimit=10): #default is hour      
     result = CryptoInstrumentPriceMarketData.query.filter_by(cryptoinstrument_id=coin_id, interval=interval).order_by(desc('retreived_datetime')).limit(recordlimit).all()    
     return result
       

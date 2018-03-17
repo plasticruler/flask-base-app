@@ -2,7 +2,7 @@
 from app import create_app, db, mail
 from app.models import *
 from app.crypto.models import *
-from app.crypto.queries import *
+import app.crypto.queries
 from flask_mail import Message
 from flask_migrate import Migrate
 import os
@@ -130,7 +130,7 @@ def get_latest_price_mark_inactive():
 
 @app.cli.command('print-last-ptr')
 def print_last_ptr():
-    ptr = ProviderTransactionRequest.query.order_by(desc('id')).first().created_on
+    ptr = queries.last_ptr.created_on
     send_email(str(ptr),"Last PTR statistic")
     app.logger.info(ptr)    
 
@@ -145,13 +145,13 @@ def get_last_prices(symbol, interval,limit):
         app.logger.error('No such coin found ({})'.format(symbol))
         send_email("Invalid coin requested {}".format(symbol),mailsubject="Error")
         return        
-    records = GetLastCoinPrices(coin.id, interval, limit)
+    records = queries.get_last_coin_prices(coin.id, interval, limit)
     for i in records: #price_close
         m.append(str(i))
         app.logger.info(i)
     content = "\n".join(m)    
-    rising = any(earlier.price_close >= later.price_close for earlier,later in itertools.izip(records,records[1:]))    
-    s = "Last {} prices email - {} (RISING: {})".format(interval, symbol, rising)
+    rising = all(earlier.price_close <= later.price_close for earlier,later in itertools.izip(records,records[1:]))    
+    s = "Last {} prices email - {} (RISING: {})".format(limit, symbol, rising)
     app.logger.info(s)
     send_email(content, mailsubject=s)
 
@@ -273,6 +273,11 @@ def make_shell_context():
     return {'db':db, 'User': User,'Expense':Expense, 'ExpenseType':ExpenseType, \
             'CryptoExchange':CryptoExchange, 'CryptoInstrument':CryptoInstrument,'ProviderTransactionRequest':ProviderTransactionRequest, \
             'DataProviderSourceUrl':DataProviderSourceUrl, 'DataProvider':DataProvider, 'CryptoInstrumentPriceMarketData':CryptoInstrumentPriceMarketData}
+
+@app.before_first_request
+def app_first():
+    for u in app.url_map.iter_rules():
+        app.logger.debug(u)
 
 if __name__=='__main__':
     app.run()

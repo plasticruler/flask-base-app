@@ -9,6 +9,7 @@ from sqlalchemy import func, desc
 
 
 @bp.route('/index', methods=['GET'])
+@bp.route('/',methods=['GET'])
 @login_required
 def index():        
     return render_template('index.html', title='welcome')

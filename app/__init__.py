@@ -52,6 +52,9 @@ def create_app(config_name='dev'):
     from app.crypto import bp as crypto_bp
     app.register_blueprint(crypto_bp, url_prefix='/crypto')
 
+    from app.crypto.api import bp as api_bp
+    app.register_blueprint(api_bp)
+
     #chartkick specific
     ck = Blueprint('ck_page', __name__, static_folder=chartkick.js(), static_url_path='/static')
     app.register_blueprint(ck, url_prefix='/ck')
