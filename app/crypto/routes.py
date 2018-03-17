@@ -12,7 +12,10 @@ from flask_paginate import Pagination, get_page_args
 
 from flask import current_app as app
 
-
+@bp.route('/coin-overview',methods=['GET'])
+def coin_overview():
+    return render_template('crypto/coin-overview.html')
+    
 @bp.route('/exchange', methods=['GET', 'POST'])
 @login_required
 def exchange():
