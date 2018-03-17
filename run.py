@@ -131,7 +131,7 @@ def get_latest_price_mark_inactive():
 @app.cli.command('print-last-ptr')
 def print_last_ptr():
     ptr = ProviderTransactionRequest.query.order_by(desc('id')).first().created_on
-    SendEmail(str(ptr),"Last PTR statistic")
+    send_email(str(ptr),"Last PTR statistic")
     app.logger.info(ptr)    
 
 @app.cli.command('last-prices')
@@ -143,15 +143,15 @@ def get_last_prices(symbol, interval,limit):
     m = []
     if coin is None:
         app.logger.error('No such coin found ({})'.format(symbol))
-        SendMail("Invalid coin requested {}".format(symbol),mailsubject="Error")
+        send_email("Invalid coin requested {}".format(symbol),mailsubject="Error")
         return        
     records = GetLastCoinPrices(coin.id, interval, limit)
     for i in records: #price_close
         m.append(str(i))
         app.logger.info(i)
     content = "\n".join(m)    
-    rising = all(earlier.price_close <= later.price_close for earlier,later in itertools.izip(records,records[1:]))    
-    s = "Last 10 prices email - {} (RISING: {})".format(symbol, rising)
+    rising = any(earlier.price_close => later.price_close for earlier,later in itertools.izip(records,records[1:]))    
+    s = "Last {} prices email - {} (RISING: {})".format(interval, symbol, rising)
     app.logger.info(s)
     send_email(content, mailsubject=s)
 
@@ -252,7 +252,7 @@ def process_data():
         if ptr.messagetype.name == 'market depth' and ptr.dataprovider.name.strip()=='Ice3x':
             data = json.loads(ptr.content)            
             if not data["errors"]:
-                data = getmarketsummaryice3x(data,'eth/zar')
+                data = get_market_summary_ice3x(data,'eth/zar')
                 o.created_on
                 for d in data:                    
                     cip = CryptoInstrumentPrice()
