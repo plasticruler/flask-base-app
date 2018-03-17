@@ -24,6 +24,12 @@ There is a lot of work to be done, and maybe my objective is not to finish this 
 + basic bash scripting, especially setting up virtualenv environment to run flask app cli 
 + data operations implementated as tasks that can be executed from a shell script (cron)
 
+# Todo list
++ More admin tasks from the front-end instead of command line driven.
++ Instead of using cron as a task scheduler (and , use Celery running off a Dockerised version of redis
++ Create a Docker image. 
++ Create a coin summary page displaying pretty (image-based) graphs and basic analytics.
++ Use an html to pdf library to convert the hourly/daily email reports.
 
 # Meta
 I started this project after leaning things in this video https://www.youtube.com/watch?v=8aTnmsDMldY, which I found to be pretty unusable once you dig into it. Instead I bought Miguel Grinberg's latest [flask mega tutorial](https://learn.miguelgrinberg.com/) book and am using that as a reference. USD 15, great bargain for what you end up learning. 
