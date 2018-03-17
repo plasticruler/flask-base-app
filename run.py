@@ -150,7 +150,7 @@ def get_last_prices(symbol, interval,limit):
         m.append(str(i))
         app.logger.info(i)
     content = "\n".join(m)    
-    rising = all(earlier.price_close => later.price_close for earlier,later in itertools.izip(records,records[1:]))    
+    rising = any(earlier.price_close >= later.price_close for earlier,later in itertools.izip(records,records[1:]))    
     s = "Last {} prices email - {} (RISING: {})".format(interval, symbol, rising)
     app.logger.info(s)
     send_email(content, mailsubject=s)
