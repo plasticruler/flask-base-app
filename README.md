@@ -27,8 +27,9 @@ There is a lot of work to be done, and maybe my objective is not to finish this 
 # Todo list
 + More data sources
 + More admin tasks from the front-end instead of command line driven.
-+ Instead of using cron as a task scheduler use Celery running off a Dockerised version of redis
++ Instead of using cron as a task scheduler use Celery running off a Dockerised version of redis.
 + Create a Docker image to get the application up and running as quickly as possible (maybe alpine linux-based for the app).
++ Send emails asynchronously.
 + Create a coin summary page displaying pretty (image-based) graphs and basic analytics.
 + Use an html to pdf library to convert the hourly/daily email reports.
 
