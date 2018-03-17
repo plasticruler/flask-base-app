@@ -9,7 +9,7 @@ There is a lot of work to be done, and maybe my objective is not to finish this 
 + wtforms
 + bootstrap for styling
 + partial html in snippets
-+ flask-authenticate
++ flask-authenticate (with user registration)
 + use jquery to call api, get result and display in div (triggered by button in a dynamically generated table)
 + display data in inline chart (using peity) after getting values from api
 + datepicker widget in flask-bootstrap
@@ -17,7 +17,7 @@ There is a lot of work to be done, and maybe my objective is not to finish this 
 + paginate sqlachemy results in generic list form
 + download and read json file, then populate table using sqlalchemy
 + use logging
-+ use configuration stored in prod or dev config files (dev.env containing passwords not checked in)
++ use configuration stored in prod or dev config files (.env file containing containing passwords not checked in)
 + set environment variables as config items
 + use blueprints
 + download content in configured urls
@@ -25,9 +25,10 @@ There is a lot of work to be done, and maybe my objective is not to finish this 
 + data operations implementated as tasks that can be executed from a shell script (cron)
 
 # Todo list
++ More data sources
 + More admin tasks from the front-end instead of command line driven.
-+ Instead of using cron as a task scheduler (and , use Celery running off a Dockerised version of redis
-+ Create a Docker image. 
++ Instead of using cron as a task scheduler use Celery running off a Dockerised version of redis
++ Create a Docker image to get the application up and running as quickly as possible (maybe alpine linux-based for the app).
 + Create a coin summary page displaying pretty (image-based) graphs and basic analytics.
 + Use an html to pdf library to convert the hourly/daily email reports.
 
