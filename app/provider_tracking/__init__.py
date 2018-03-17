@@ -2,11 +2,6 @@
 from app.crypto.models import ProviderTransactionRequest
 from app import db
 
-#url = db.Column(db.String(1024))        
-#    messagetype_id = db.Column(db.Integer,db.ForeignKey('messagetype.id'),nullable=False)
-#    content = db.Column(db.String(8096))       
-#    processed = db.Co
-
 class PTR(object):
     def __init__(self, messagetype_id, url, logger=None):        
         self.messagetype_id = messagetype_id        
